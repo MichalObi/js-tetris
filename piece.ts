@@ -1,10 +1,10 @@
 class Piece {
-  x;
-  y;
-  color;
-  shape;
-  ctx;
-  typeId;
+  public x; // number
+  public y; // number
+  public color; // any value from COLORS
+  public shape; // any value from SHAPES
+  public ctx; // fields: width, height, fillStyle, scale (fn), fillRect(fn)
+  public typeId; // number returned from randomizeTetrominoType
 
   constructor(ctx) {
     this.ctx = ctx;

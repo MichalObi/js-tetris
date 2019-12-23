@@ -62,11 +62,11 @@ function addEventListener() {
           account.score += POINTS.HARD_DROP;
           board.piece.move(p);
           p = moves[KEY.DOWN](board.piece);
-        }       
+        }
       } else if (board.valid(p)) {
         board.piece.move(p);
         if (event.keyCode === KEY.DOWN) {
-          account.score += POINTS.SOFT_DROP;         
+          account.score += POINTS.SOFT_DROP;
         }
       }
     }
@@ -126,11 +126,10 @@ function pause() {
 
   cancelAnimationFrame(requestId);
   requestId = null;
-  
+
   ctx.fillStyle = 'black';
   ctx.fillRect(1, 3, 8, 1.2);
   ctx.font = '1px Arial';
   ctx.fillStyle = 'yellow';
   ctx.fillText('PAUSED', 3, 4);
 }
-

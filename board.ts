@@ -1,11 +1,11 @@
 class Board {
-  ctx;
-  ctxNext;
-  grid;
-  piece;
-  next;
-  requestId;
-  time;
+  public ctx; // fields: width, height, fillStyle, scale (fn), fillRect(fn)
+  public ctxNext; // the same what ctx is
+  public grid // array of array of numbers
+  public piece // "piece" type (from interface) impl: setStartingPosition (fn)
+  public next; // piece class instance
+  public requestId; // return of requestAnimationFrame
+  public time; // any value from LEVEL
 
   constructor(ctx, ctxNext) {
     this.ctx = ctx;
@@ -33,8 +33,8 @@ class Board {
     this.next = new Piece(this.ctxNext);
     this.ctxNext.clearRect(
       0,
-      0, 
-      this.ctxNext.canvas.width, 
+      0,
+      this.ctxNext.canvas.width,
       this.ctxNext.canvas.height
     );
     this.next.draw();
@@ -80,7 +80,7 @@ class Board {
         this.grid.unshift(Array(COLS).fill(0));
       }
     });
-    
+
     if (lines > 0) {
       // Calculate points from cleared lines and level.
 
@@ -90,8 +90,8 @@ class Board {
       // If we have reached the lines for next level
       if (account.lines >= LINES_PER_LEVEL) {
         // Goto next level
-        account.level++;  
-        
+        account.level++;
+
         // Remove lines so we start working for the next level
         account.lines -= LINES_PER_LEVEL;
 
