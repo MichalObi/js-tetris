@@ -1,5 +1,5 @@
-import {SHAPES, COLORS} from './constants';
-import {PieceInterface, MoveInterface} from './interfaces'
+import {PieceInterface, MoveInterface} from './interfaces.js';
+import {SHAPES, COLORS} from './constants.js';
 
 export class Piece implements PieceInterface {
   public x: number;

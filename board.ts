@@ -1,15 +1,20 @@
-class Board {
+import {Piece} from './piece.js';
+import {COLS, ROWS, BLOCK_SIZE, KEY, LINES_PER_LEVEL, LEVEL, POINTS, COLORS, BASIC_MOVES} from './constants.js';
+
+export class Board {
   public ctx; // fields: width, height, fillStyle, scale (fn), fillRect(fn)
   public ctxNext; // the same what ctx is
+  public account;
   public grid // array of array of numbers
   public piece // "piece" type (from interface) impl: setStartingPosition (fn)
   public next; // piece class instance
   public requestId; // return of requestAnimationFrame
   public time; // any value from LEVEL
 
-  constructor(ctx, ctxNext) {
+  constructor(ctx, ctxNext, account) {
     this.ctx = ctx;
     this.ctxNext = ctxNext;
+    this.account = account;
     this.init();
   }
 
@@ -46,7 +51,7 @@ class Board {
   }
 
   drop() {
-    let p = moves[KEY.DOWN](this.piece);
+    let p = BASIC_MOVES[KEY.DOWN](this.piece);
     if (this.valid(p)) {
       this.piece.move(p);
     } else {
@@ -84,19 +89,19 @@ class Board {
     if (lines > 0) {
       // Calculate points from cleared lines and level.
 
-      account.score += this.getLinesClearedPoints(lines);
-      account.lines += lines;
+      this.account.score += this.getLinesClearedPoints(lines);
+      this.account.lines += lines;
 
       // If we have reached the lines for next level
-      if (account.lines >= LINES_PER_LEVEL) {
+      if (this.account.lines >= LINES_PER_LEVEL) {
         // Goto next level
-        account.level++;
+        this.account.level++;
 
         // Remove lines so we start working for the next level
-        account.lines -= LINES_PER_LEVEL;
+        this.account.lines -= LINES_PER_LEVEL;
 
         // Increase speed of game
-        time.level = LEVEL[account.level];
+        time.level = LEVEL[this.account.level];
       }
     }
   }
@@ -179,6 +184,6 @@ class Board {
         ? POINTS.TETRIS
         : 0;
 
-    return (account.level + 1) * lineClearPoints;
+    return (this.account.level + 1) * lineClearPoints;
   }
 }

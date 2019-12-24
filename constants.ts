@@ -1,7 +1,7 @@
 export const COLS = 10;
 export const ROWS = 20;
 export const BLOCK_SIZE = 30;
-const LINES_PER_LEVEL = 10;
+export const LINES_PER_LEVEL = 10;
 
 export const COLORS = [
   'none',
@@ -58,6 +58,13 @@ export enum KEY {
   RIGHT = 39,
   DOWN = 40,
   P = 80
+}
+
+export const BASIC_MOVES = {
+  [KEY.LEFT]: p => ({ ...p, x: p.x - 1 }),
+  [KEY.RIGHT]: p => ({ ...p, x: p.x + 1 }),
+  [KEY.DOWN]: p => ({ ...p, y: p.y + 1 }),
+  [KEY.SPACE]: p => ({ ...p, y: p.y + 1 }),
 }
 
 export enum POINTS {

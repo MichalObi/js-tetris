@@ -1,7 +1,12 @@
+import {Board} from './board.js';
+import {KEY, BLOCK_SIZE, POINTS, LEVEL, BASIC_MOVES} from './constants.js';
+
 const canvas = document.getElementById('board');
 const ctx = canvas.getContext('2d');
 const canvasNext = document.getElementById('next');
 const ctxNext = canvasNext.getContext('2d');
+
+let time;
 
 let accountValues = {
   score: 0,
@@ -26,16 +31,15 @@ let account = new Proxy(accountValues, {
 
 let requestId;
 
-moves = {
-  [KEY.LEFT]: p => ({ ...p, x: p.x - 1 }),
-  [KEY.RIGHT]: p => ({ ...p, x: p.x + 1 }),
-  [KEY.DOWN]: p => ({ ...p, y: p.y + 1 }),
-  [KEY.SPACE]: p => ({ ...p, y: p.y + 1 }),
+let board = new Board(ctx, ctxNext, account);
+
+let moves = {
+  ...BASIC_MOVES,
   [KEY.UP]: p => board.rotate(p)
 };
 
-let board = new Board(ctx, ctxNext);
 addEventListener();
+
 initNext();
 
 function initNext() {
@@ -133,3 +137,5 @@ function pause() {
   ctx.fillStyle = 'yellow';
   ctx.fillText('PAUSED', 3, 4);
 }
+
+document.querySelector('#play').addEventListener('click', play);

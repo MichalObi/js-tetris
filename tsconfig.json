@@ -1,1 +1,8 @@
-{}
+{
+    "compilerOptions": {
+        "module": "ES6",
+        "target": "ESNext",
+        "outDir": "built",
+        "rootDir": "./"
+    }
+}
