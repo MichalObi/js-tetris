@@ -27,7 +27,8 @@ export class Board {
     this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
   }
 
-  reset() {
+  reset(time) {
+    this.time = time;
     this.grid = this.getEmptyGrid();
     this.piece = new Piece(this.ctx);
     this.piece.setStartingPosition();
@@ -101,7 +102,7 @@ export class Board {
         this.account.lines -= LINES_PER_LEVEL;
 
         // Increase speed of game
-        time.level = LEVEL[this.account.level];
+        this.time.level = LEVEL[this.account.level];
       }
     }
   }
@@ -172,7 +173,7 @@ export class Board {
     return p;
   }
 
-  getLinesClearedPoints(lines, level) {
+  getLinesClearedPoints(lines) {
     const lineClearPoints =
       lines === 1
         ? POINTS.SINGLE

@@ -3,6 +3,6 @@
         "module": "ES6",
         "target": "ESNext",
         "outDir": "built",
-        "rootDir": "./"
+        "rootDir": "src"
     }
 }

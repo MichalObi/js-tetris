@@ -1,9 +1,9 @@
 import {Board} from './board.js';
 import {KEY, BLOCK_SIZE, POINTS, LEVEL, BASIC_MOVES} from './constants.js';
 
-const canvas = document.getElementById('board');
+const canvas = <HTMLCanvasElement>document.getElementById('board');
 const ctx = canvas.getContext('2d');
-const canvasNext = document.getElementById('next');
+const canvasNext = <HTMLCanvasElement>document.getElementById('next');
 const ctxNext = canvasNext.getContext('2d');
 
 let time;
@@ -81,8 +81,8 @@ function resetGame() {
   account.score = 0;
   account.lines = 0;
   account.level = 0;
-  board.reset();
   time = { start: 0, elapsed: 0, level: LEVEL[account.level] };
+  board.reset(time);
 }
 
 function play() {
