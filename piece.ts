@@ -1,12 +1,15 @@
-class Piece {
-  public x; // number
-  public y; // number
-  public color; // any value from COLORS
-  public shape; // any value from SHAPES
-  public ctx; // fields: width, height, fillStyle, scale (fn), fillRect(fn)
-  public typeId; // number returned from randomizeTetrominoType
+import {SHAPES, COLORS} from './constants';
+import {PieceInterface, MoveInterface} from './interfaces'
 
-  constructor(ctx) {
+export class Piece implements PieceInterface {
+  public x: number;
+  public y: number;
+  public typeId: number;
+  public ctx: CanvasRenderingContext2D;
+  public color;
+  public shape;
+
+  constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;
     this.spawn();
   }
@@ -30,7 +33,7 @@ class Piece {
     });
   }
 
-  move(p) {
+  move(p: MoveInterface) {
     this.x = p.x;
     this.y = p.y;
     this.shape = p.shape;
@@ -40,7 +43,7 @@ class Piece {
     this.x = this.typeId === 4 ? 4 : 3;
   }
 
-  randomizeTetrominoType(noOfTypes) {
+  randomizeTetrominoType(noOfTypes: number): number {
     return Math.floor(Math.random() * noOfTypes + 1);
   }
 }

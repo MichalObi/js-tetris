@@ -1,9 +1,9 @@
-const COLS = 10;
-const ROWS = 20;
-const BLOCK_SIZE = 30;
+export const COLS = 10;
+export const ROWS = 20;
+export const BLOCK_SIZE = 30;
 const LINES_PER_LEVEL = 10;
 
-const COLORS = [
+export const COLORS = [
   'none',
   'cyan',
   'blue',
@@ -14,7 +14,7 @@ const COLORS = [
   'red'
 ];
 
-const SHAPES = [
+export const SHAPES = [
   [],
   [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
   [[2, 0, 0], [2, 2, 2], [0, 0, 0]],
@@ -25,7 +25,7 @@ const SHAPES = [
   [[7, 7, 0], [0, 7, 7], [0, 0, 0]]
 ];
 
-const LEVEL = {
+export const LEVEL = {
   0: 800,
   1: 720,
   2: 630,
@@ -50,7 +50,7 @@ const LEVEL = {
   // 29+ is 20ms
 }
 
-enum KEY {
+export enum KEY {
   ESC = 27,
   SPACE = 32,
   LEFT = 37,
@@ -60,7 +60,7 @@ enum KEY {
   P = 80
 }
 
-enum POINTS {
+export enum POINTS {
   SINGLE = 100,
   DOUBLE = 300,
   TRIPLE = 500,

@@ -1,8 +1,10 @@
-var COLS = 10;
-var ROWS = 20;
-var BLOCK_SIZE = 30;
+"use strict";
+exports.__esModule = true;
+exports.COLS = 10;
+exports.ROWS = 20;
+exports.BLOCK_SIZE = 30;
 var LINES_PER_LEVEL = 10;
-var COLORS = [
+exports.COLORS = [
     'none',
     'cyan',
     'blue',
@@ -12,7 +14,7 @@ var COLORS = [
     'purple',
     'red'
 ];
-var SHAPES = [
+exports.SHAPES = [
     [],
     [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
     [[2, 0, 0], [2, 2, 2], [0, 0, 0]],
@@ -22,7 +24,7 @@ var SHAPES = [
     [[0, 6, 0], [6, 6, 6], [0, 0, 0]],
     [[7, 7, 0], [0, 7, 7], [0, 0, 0]]
 ];
-var LEVEL = {
+exports.LEVEL = {
     0: 800,
     1: 720,
     2: 630,
@@ -54,7 +56,7 @@ var KEY;
     KEY[KEY["RIGHT"] = 39] = "RIGHT";
     KEY[KEY["DOWN"] = 40] = "DOWN";
     KEY[KEY["P"] = 80] = "P";
-})(KEY || (KEY = {}));
+})(KEY = exports.KEY || (exports.KEY = {}));
 var POINTS;
 (function (POINTS) {
     POINTS[POINTS["SINGLE"] = 100] = "SINGLE";
@@ -63,4 +65,4 @@ var POINTS;
     POINTS[POINTS["TETRIS"] = 800] = "TETRIS";
     POINTS[POINTS["SOFT_DROP"] = 1] = "SOFT_DROP";
     POINTS[POINTS["HARD_DROP"] = 2] = "HARD_DROP";
-})(POINTS || (POINTS = {}));
+})(POINTS = exports.POINTS || (exports.POINTS = {}));
