@@ -1,8 +1,8 @@
 import { Piece } from './piece.js';
-import { accountValuesInterface, timeInterface } from './interfaces.js';
+import { BoardInterface, accountValuesInterface, timeInterface } from './interfaces.js';
 import { COLS, ROWS, BLOCK_SIZE, KEY, LINES_PER_LEVEL, LEVEL, POINTS, COLORS, BASIC_MOVES } from './constants.js';
 
-export class Board {
+export class Board implements BoardInterface {
   public ctx: CanvasRenderingContext2D;
   public ctxNext: CanvasRenderingContext2D;
   public account: accountValuesInterface;
@@ -118,7 +118,7 @@ export class Board {
     });
   }
 
-  freeze(): void  {
+  freeze(): void {
     this.piece.shape.forEach((row, y) => {
       row.forEach((value, x) => {
         if (value > 0) {
@@ -128,7 +128,7 @@ export class Board {
     });
   }
 
-  drawBoard(): void  {
+  drawBoard(): void {
     this.grid.forEach((row, y) => {
       row.forEach((value, x) => {
         if (value > 0) {

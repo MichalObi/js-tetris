@@ -18,6 +18,16 @@ export interface PieceInterface {
   randomizeTetrominoType(noOfTypes: number): number
 }
 
+export interface BoardInterface {
+  ctx: CanvasRenderingContext2D;
+  ctxNext: CanvasRenderingContext2D;
+  account: accountValuesInterface;
+  grid: number[][];
+  piece: PieceInterface;
+  next: PieceInterface;
+  time: timeInterface;
+}
+
 export interface accountValuesInterface {
   score: number,
   level: number,
