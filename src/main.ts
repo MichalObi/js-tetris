@@ -15,15 +15,15 @@ let accountValues: accountValuesInterface = {
   lines: 0
 }
 
-function updateAccount(key, value) {
-  let element = document.getElementById(key);
+function updateAccount(key, value: string) {
+  let element = document.querySelector(`#${key}`);
   if (element) {
     element.textContent = value;
   }
 }
 
 let account = new Proxy(accountValues, {
-  set: (target, key, value): boolean => {
+  set: (target, key, value: string): boolean => {
     target[key] = value;
     updateAccount(key, value);
     return true;
@@ -32,7 +32,7 @@ let account = new Proxy(accountValues, {
 
 let requestId: number;
 
-let board = new Board(ctx, ctxNext, account);
+let board: Board = new Board(ctx, ctxNext, account);
 
 let moves = {
   ...BASIC_MOVES,
@@ -43,14 +43,14 @@ addEventListener();
 
 initNext();
 
-function initNext() {
+function initNext(): void {
   // Calculate size of canvas from constants.
   ctxNext.canvas.width = 4 * BLOCK_SIZE;
   ctxNext.canvas.height = 4 * BLOCK_SIZE;
   ctxNext.scale(BLOCK_SIZE, BLOCK_SIZE);
 }
 
-function addEventListener() {
+function addEventListener(): void {
   document.addEventListener('keydown', event => {
     if (event.keyCode === KEY.P) {
       pause();
@@ -78,7 +78,7 @@ function addEventListener() {
   });
 }
 
-function resetGame() {
+function resetGame(): void {
   account.score = 0;
   account.lines = 0;
   account.level = 0;
@@ -86,7 +86,7 @@ function resetGame() {
   board.reset(time);
 }
 
-function play() {
+function play(): void {
   resetGame();
   time.start = performance.now();
   // If we have an old game running a game then cancel the old
@@ -97,7 +97,7 @@ function play() {
   animate();
 }
 
-function animate(now = 0) {
+function animate(now:number = 0): void {
   time.elapsed = now - time.start;
   if (time.elapsed > time.level) {
     time.start = now;
@@ -114,7 +114,7 @@ function animate(now = 0) {
   requestId = requestAnimationFrame(animate);
 }
 
-function gameOver() {
+function gameOver(): void {
   cancelAnimationFrame(requestId);
   ctx.fillStyle = 'black';
   ctx.fillRect(1, 3, 8, 1.2);
@@ -123,7 +123,7 @@ function gameOver() {
   ctx.fillText('GAME OVER', 1.8, 4);
 }
 
-function pause() {
+function pause(): void {
   if (!requestId) {
     animate();
     return;
