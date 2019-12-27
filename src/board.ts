@@ -1,24 +1,24 @@
-import {Piece} from './piece.js';
-import {COLS, ROWS, BLOCK_SIZE, KEY, LINES_PER_LEVEL, LEVEL, POINTS, COLORS, BASIC_MOVES} from './constants.js';
+import { Piece } from './piece.js';
+import { accountValuesInterface, timeInterface } from './interfaces.js';
+import { COLS, ROWS, BLOCK_SIZE, KEY, LINES_PER_LEVEL, LEVEL, POINTS, COLORS, BASIC_MOVES } from './constants.js';
 
 export class Board {
-  public ctx; // fields: width, height, fillStyle, scale (fn), fillRect(fn)
-  public ctxNext; // the same what ctx is
-  public account;
-  public grid // array of array of numbers
-  public piece // "piece" type (from interface) impl: setStartingPosition (fn)
-  public next; // piece class instance
-  public requestId; // return of requestAnimationFrame
-  public time; // any value from LEVEL
+  public ctx: CanvasRenderingContext2D;
+  public ctxNext: CanvasRenderingContext2D;
+  public account: accountValuesInterface;
+  public grid: number[][];
+  public piece: Piece;
+  public next: Piece;
+  public time: timeInterface;
 
-  constructor(ctx, ctxNext, account) {
+  constructor(ctx: CanvasRenderingContext2D, ctxNext: CanvasRenderingContext2D, account: accountValuesInterface) {
     this.ctx = ctx;
     this.ctxNext = ctxNext;
     this.account = account;
     this.init();
   }
 
-  init() {
+  init(): void {
     // Calculate size of canvas from constants.
     this.ctx.canvas.width = COLS * BLOCK_SIZE;
     this.ctx.canvas.height = ROWS * BLOCK_SIZE;
@@ -27,7 +27,7 @@ export class Board {
     this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
   }
 
-  reset(time) {
+  reset(time: timeInterface): void {
     this.time = time;
     this.grid = this.getEmptyGrid();
     this.piece = new Piece(this.ctx);
@@ -35,24 +35,22 @@ export class Board {
     this.getNewPiece();
   }
 
-  getNewPiece() {
+  getNewPiece(): void {
+    const { width, height } = this.ctxNext.canvas;
+
     this.next = new Piece(this.ctxNext);
-    this.ctxNext.clearRect(
-      0,
-      0,
-      this.ctxNext.canvas.width,
-      this.ctxNext.canvas.height
-    );
+    this.ctxNext.clearRect(0, 0, width, height);
     this.next.draw();
   }
 
-  draw() {
+  draw(): void {
     this.piece.draw();
     this.drawBoard();
   }
 
-  drop() {
+  drop(): boolean {
     let p = BASIC_MOVES[KEY.DOWN](this.piece);
+
     if (this.valid(p)) {
       this.piece.move(p);
     } else {
@@ -70,7 +68,7 @@ export class Board {
     return true;
   }
 
-  clearLines() {
+  clearLines(): void {
     let lines = 0;
 
     this.grid.forEach((row, y) => {
@@ -107,11 +105,11 @@ export class Board {
     }
   }
 
-  valid(p) {
+  valid(p: Piece): boolean {
     return p.shape.every((row, dy) => {
       return row.every((value, dx) => {
-        let x = p.x + dx;
-        let y = p.y + dy;
+        let x = p.x + dx,
+          y = p.y + dy;
         return (
           value === 0 ||
           (this.insideWalls(x) && this.aboveFloor(y) && this.notOccupied(x, y))
@@ -120,7 +118,7 @@ export class Board {
     });
   }
 
-  freeze() {
+  freeze(): void  {
     this.piece.shape.forEach((row, y) => {
       row.forEach((value, x) => {
         if (value > 0) {
@@ -130,7 +128,7 @@ export class Board {
     });
   }
 
-  drawBoard() {
+  drawBoard(): void  {
     this.grid.forEach((row, y) => {
       row.forEach((value, x) => {
         if (value > 0) {
@@ -141,23 +139,23 @@ export class Board {
     });
   }
 
-  getEmptyGrid() {
+  getEmptyGrid(): number[][] {
     return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
   }
 
-  insideWalls(x) {
+  insideWalls(x: number): boolean {
     return x >= 0 && x < COLS;
   }
 
-  aboveFloor(y) {
+  aboveFloor(y: number): boolean {
     return y <= ROWS;
   }
 
-  notOccupied(x, y) {
+  notOccupied(x: number, y: number) {
     return this.grid[y] && this.grid[y][x] === 0;
   }
 
-  rotate(piece) {
+  rotate(piece: Piece): Piece {
     // Clone with JSON for immutability.
     let p = JSON.parse(JSON.stringify(piece));
 
@@ -173,17 +171,17 @@ export class Board {
     return p;
   }
 
-  getLinesClearedPoints(lines) {
+  getLinesClearedPoints(lines: number): number {
     const lineClearPoints =
       lines === 1
         ? POINTS.SINGLE
         : lines === 2
-        ? POINTS.DOUBLE
-        : lines === 3
-        ? POINTS.TRIPLE
-        : lines === 4
-        ? POINTS.TETRIS
-        : 0;
+          ? POINTS.DOUBLE
+          : lines === 3
+            ? POINTS.TRIPLE
+            : lines === 4
+              ? POINTS.TETRIS
+              : 0;
 
     return (this.account.level + 1) * lineClearPoints;
   }

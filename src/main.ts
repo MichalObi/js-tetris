@@ -1,14 +1,15 @@
-import {Board} from './board.js';
-import {KEY, BLOCK_SIZE, POINTS, LEVEL, BASIC_MOVES} from './constants.js';
+import { Board } from './board.js';
+import { accountValuesInterface } from './interfaces.js';
+import { KEY, BLOCK_SIZE, POINTS, LEVEL, BASIC_MOVES } from './constants.js';
 
-const canvas = <HTMLCanvasElement>document.getElementById('board');
+const canvas = <HTMLCanvasElement>document.querySelector('#board');
 const ctx = canvas.getContext('2d');
-const canvasNext = <HTMLCanvasElement>document.getElementById('next');
+const canvasNext = <HTMLCanvasElement>document.querySelector('#next');
 const ctxNext = canvasNext.getContext('2d');
 
 let time;
 
-let accountValues = {
+let accountValues: accountValuesInterface = {
   score: 0,
   level: 0,
   lines: 0
@@ -22,14 +23,14 @@ function updateAccount(key, value) {
 }
 
 let account = new Proxy(accountValues, {
-  set: (target, key, value) => {
+  set: (target, key, value): boolean => {
     target[key] = value;
     updateAccount(key, value);
     return true;
   }
 });
 
-let requestId;
+let requestId: number;
 
 let board = new Board(ctx, ctxNext, account);
 
