@@ -9,17 +9,16 @@ const ctxNext = canvasNext.getContext('2d');
 
 let time;
 
-let accountValues: accountValuesInterface = {
+const accountValues: accountValuesInterface = {
   score: 0,
   level: 0,
   lines: 0
 }
 
 function updateAccount(key, value: string) {
-  let element = document.querySelector(`#${key}`);
-  if (element) {
-    element.textContent = value;
-  }
+  const element = document.querySelector(`#${key}`);
+
+  if (element) element.textContent = value;
 }
 
 let account = new Proxy(accountValues, {
@@ -34,7 +33,7 @@ let requestId: number;
 
 let board: Board = new Board(ctx, ctxNext, account);
 
-let moves = {
+const moves = {
   ...BASIC_MOVES,
   [KEY.UP]: p => board.rotate(p)
 };
