@@ -97,29 +97,25 @@ function play(): void {
 }
 
 function keyDownEventListener(event) {
-  if (event.keyCode === KEY.P) pause();
+  const { keyCode } = event, validGameKey = moves[keyCode];
 
-  const validGameKey = moves[event.keyCode];
+  if (keyCode === KEY.P) pause();
 
-  if (event.keyCode === KEY.ESC) {
+  if (keyCode === KEY.ESC) {
     gameOver();
   } else if (board.piece && validGameKey) {
     event.preventDefault();
-    // Get new state
-    let p = validGameKey(board.piece);
+    const p = validGameKey(board.piece); // Get new state - dispatche key "move"
 
-    if (event.keyCode === KEY.SPACE) {
-      // Hard drop
+    if (keyCode === KEY.SPACE) {   // Hard drop
       while (board.valid(p)) {
         account.score += POINTS.HARD_DROP;
         board.piece.move(p);
         p = moves[KEY.DOWN](board.piece);
       }
-    } else if (board.valid(p)) {
+    } else if (board.valid(p)) { // Soft drop
       board.piece.move(p);
-      if (event.keyCode === KEY.DOWN) {
-        account.score += POINTS.SOFT_DROP;
-      }
+      if (keyCode === KEY.DOWN) account.score += POINTS.SOFT_DROP;
     }
   }
 }
