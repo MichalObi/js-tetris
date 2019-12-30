@@ -29,7 +29,7 @@ export const LEVEL = {
   0: 800,
   1: 720,
   2: 630,
-  3 :550,
+  3: 550,
   4: 470,
   5: 380,
   6: 300,
@@ -74,4 +74,9 @@ export enum POINTS {
   TETRIS = 800,
   SOFT_DROP = 1,
   HARD_DROP = 2,
+}
+
+export const CANVAS_TEXT = {
+  OVER: 'GAME OVER',
+  PAUSED: 'PAUSED'
 }

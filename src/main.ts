@@ -1,6 +1,6 @@
 import { Board } from './board.js';
 import { accountValuesInterface, canvasTextParamsInterface } from './interfaces.js';
-import { KEY, BLOCK_SIZE, POINTS, LEVEL, BASIC_MOVES } from './constants.js';
+import { KEY, BLOCK_SIZE, POINTS, LEVEL, BASIC_MOVES, CANVAS_TEXT } from './constants.js';
 
 const canvas = <HTMLCanvasElement>document.querySelector('#board');
 const ctx = canvas.getContext('2d');
@@ -49,7 +49,7 @@ function repaintCanvasText(canvasTextParams: canvasTextParamsInterface): void {
 
 function gameOver(): void {
   cancelAnimationFrame(requestId);
-  repaintCanvasText({ text: 'GAME OVER', textPositionX: 1.8, textPositionY: 4, textColorFill: 'red' });
+  repaintCanvasText({ text: CANVAS_TEXT.OVER, textPositionX: 1.8, textPositionY: 4, textColorFill: 'red' });
 }
 
 function pause(): void {
@@ -61,22 +61,16 @@ function pause(): void {
   cancelAnimationFrame(requestId);
   requestId = null;
 
-  repaintCanvasText({ text: 'PAUSED', textPositionX: 3, textPositionY: 4, textColorFill: 'yellow' });
-}
-
-function resetGame(): void {
-  account.score = 0;
-  account.lines = 0;
-  account.level = 0;
-  time = { start: 0, elapsed: 0, level: LEVEL[account.level] };
-  board.reset(time);
+  repaintCanvasText({ text: CANVAS_TEXT.PAUSED, textPositionX: 3, textPositionY: 4, textColorFill: 'yellow' });
 }
 
 function animate(now: number = 0): void {
   time.elapsed = now - time.start;
   if (time.elapsed > time.level) {
     time.start = now;
-    if (!board.drop()) {
+    const dropNewPiece = board.drop();
+
+    if (!dropNewPiece) {
       gameOver();
       return;
     }
@@ -86,6 +80,12 @@ function animate(now: number = 0): void {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   board.draw();
   requestId = requestAnimationFrame(animate);
+}
+
+function resetGame(): void {
+  account = { score: 0, lines: 0, level: 0 }
+  time = { start: 0, elapsed: 0, level: LEVEL[account.level] };
+  board.reset(time);
 }
 
 function play(): void {
@@ -99,16 +99,18 @@ function play(): void {
 function keyDownEventListener(event) {
   if (event.keyCode === KEY.P) pause();
 
+  const validGameKey = moves[event.keyCode];
+
   if (event.keyCode === KEY.ESC) {
     gameOver();
-  } else if (moves[event.keyCode]) {
+  } else if (board.piece && validGameKey) {
     event.preventDefault();
     // Get new state
-    let p = moves[event.keyCode](board.piece);
+    let p = validGameKey(board.piece);
+
     if (event.keyCode === KEY.SPACE) {
       // Hard drop
       while (board.valid(p)) {
-        console.log('ok');
         account.score += POINTS.HARD_DROP;
         board.piece.move(p);
         p = moves[KEY.DOWN](board.piece);
@@ -128,15 +130,15 @@ function addEventListeners(): void {
 }
 
 function initNext(): void {
-  // Calculate size of canvas from constants.
+  // Calculate size of #next canvas from constants.
   ctxNext.canvas.width = 4 * BLOCK_SIZE;
   ctxNext.canvas.height = 4 * BLOCK_SIZE;
   ctxNext.scale(BLOCK_SIZE, BLOCK_SIZE);
 }
 
 function startGame(): void {
-  addEventListeners();
   initNext();
+  addEventListeners();
 }
 
 startGame();
