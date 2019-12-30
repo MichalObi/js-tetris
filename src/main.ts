@@ -1,5 +1,5 @@
 import { Board } from './board.js';
-import { accountValuesInterface } from './interfaces.js';
+import { accountValuesInterface, canvasTextParamsInterface } from './interfaces.js';
 import { KEY, BLOCK_SIZE, POINTS, LEVEL, BASIC_MOVES } from './constants.js';
 
 const canvas = <HTMLCanvasElement>document.querySelector('#board');
@@ -15,21 +15,20 @@ const accountValues: accountValuesInterface = {
   lines: 0
 }
 
-function updateAccount(key, value: string) {
-  const element = document.querySelector(`#${key}`);
-
-  if (element) element.textContent = value;
+function updateAccount(key: string, value: number) {
+  const element = <HTMLElement>document.querySelector(`#${key}`);
+  if (element) element.textContent = value.toString();
 }
 
-let account = new Proxy(accountValues, {
-  set: (target, key, value: string): boolean => {
+let account: accountValuesInterface = new Proxy(accountValues, {
+  set: (target: accountValuesInterface, key: string, value: number): boolean => {
     target[key] = value;
     updateAccount(key, value);
     return true;
   }
 });
 
-let requestId: number;
+let requestId: number; //next animation frame
 
 let board: Board = new Board(ctx, ctxNext, account);
 
@@ -38,88 +37,19 @@ const moves = {
   [KEY.UP]: p => board.rotate(p)
 };
 
-addEventListener();
+function repaintCanvasText(canvasTextParams: canvasTextParamsInterface): void {
+  const { text, textPositionX, textPositionY, textColorFill } = canvasTextParams;
 
-initNext();
-
-function initNext(): void {
-  // Calculate size of canvas from constants.
-  ctxNext.canvas.width = 4 * BLOCK_SIZE;
-  ctxNext.canvas.height = 4 * BLOCK_SIZE;
-  ctxNext.scale(BLOCK_SIZE, BLOCK_SIZE);
-}
-
-function addEventListener(): void {
-  document.addEventListener('keydown', event => {
-    if (event.keyCode === KEY.P) {
-      pause();
-    }
-    if (event.keyCode === KEY.ESC) {
-      gameOver();
-    } else if (moves[event.keyCode]) {
-      event.preventDefault();
-      // Get new state
-      let p = moves[event.keyCode](board.piece);
-      if (event.keyCode === KEY.SPACE) {
-        // Hard drop
-        while (board.valid(p)) {
-          account.score += POINTS.HARD_DROP;
-          board.piece.move(p);
-          p = moves[KEY.DOWN](board.piece);
-        }
-      } else if (board.valid(p)) {
-        board.piece.move(p);
-        if (event.keyCode === KEY.DOWN) {
-          account.score += POINTS.SOFT_DROP;
-        }
-      }
-    }
-  });
-}
-
-function resetGame(): void {
-  account.score = 0;
-  account.lines = 0;
-  account.level = 0;
-  time = { start: 0, elapsed: 0, level: LEVEL[account.level] };
-  board.reset(time);
-}
-
-function play(): void {
-  resetGame();
-  time.start = performance.now();
-  // If we have an old game running a game then cancel the old
-  if (requestId) {
-    cancelAnimationFrame(requestId);
-  }
-
-  animate();
-}
-
-function animate(now:number = 0): void {
-  time.elapsed = now - time.start;
-  if (time.elapsed > time.level) {
-    time.start = now;
-    if (!board.drop()) {
-      gameOver();
-      return;
-    }
-  }
-
-  // Clear board before drawing new state.
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-  board.draw();
-  requestId = requestAnimationFrame(animate);
+  ctx.fillStyle = 'black';
+  ctx.fillRect(1, 3, 8, 1.2);
+  ctx.font = '1px Arial';
+  ctx.fillStyle = textColorFill;
+  ctx.fillText(text, textPositionX, textPositionY);
 }
 
 function gameOver(): void {
   cancelAnimationFrame(requestId);
-  ctx.fillStyle = 'black';
-  ctx.fillRect(1, 3, 8, 1.2);
-  ctx.font = '1px Arial';
-  ctx.fillStyle = 'red';
-  ctx.fillText('GAME OVER', 1.8, 4);
+  repaintCanvasText({ text: 'GAME OVER', textPositionX: 1.8, textPositionY: 4, textColorFill: 'red' });
 }
 
 function pause(): void {
@@ -131,11 +61,82 @@ function pause(): void {
   cancelAnimationFrame(requestId);
   requestId = null;
 
-  ctx.fillStyle = 'black';
-  ctx.fillRect(1, 3, 8, 1.2);
-  ctx.font = '1px Arial';
-  ctx.fillStyle = 'yellow';
-  ctx.fillText('PAUSED', 3, 4);
+  repaintCanvasText({ text: 'PAUSED', textPositionX: 3, textPositionY: 4, textColorFill: 'yellow' });
 }
 
-document.querySelector('#play').addEventListener('click', play);
+function resetGame(): void {
+  account.score = 0;
+  account.lines = 0;
+  account.level = 0;
+  time = { start: 0, elapsed: 0, level: LEVEL[account.level] };
+  board.reset(time);
+}
+
+function animate(now: number = 0): void {
+  time.elapsed = now - time.start;
+  if (time.elapsed > time.level) {
+    time.start = now;
+    if (!board.drop()) {
+      gameOver();
+      return;
+    }
+  }
+
+  // Clear board before drawing new state.
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  board.draw();
+  requestId = requestAnimationFrame(animate);
+}
+
+function play(): void {
+  resetGame();
+  time.start = performance.now();
+  // If we have an old game running a game then cancel the old
+  if (requestId) cancelAnimationFrame(requestId);
+  animate();
+}
+
+function keyDownEventListener(event) {
+  if (event.keyCode === KEY.P) pause();
+
+  if (event.keyCode === KEY.ESC) {
+    gameOver();
+  } else if (moves[event.keyCode]) {
+    event.preventDefault();
+    // Get new state
+    let p = moves[event.keyCode](board.piece);
+    if (event.keyCode === KEY.SPACE) {
+      // Hard drop
+      while (board.valid(p)) {
+        console.log('ok');
+        account.score += POINTS.HARD_DROP;
+        board.piece.move(p);
+        p = moves[KEY.DOWN](board.piece);
+      }
+    } else if (board.valid(p)) {
+      board.piece.move(p);
+      if (event.keyCode === KEY.DOWN) {
+        account.score += POINTS.SOFT_DROP;
+      }
+    }
+  }
+}
+
+function addEventListeners(): void {
+  document.addEventListener('keydown', keyDownEventListener);
+  document.querySelector('#play').addEventListener('click', play);
+}
+
+function initNext(): void {
+  // Calculate size of canvas from constants.
+  ctxNext.canvas.width = 4 * BLOCK_SIZE;
+  ctxNext.canvas.height = 4 * BLOCK_SIZE;
+  ctxNext.scale(BLOCK_SIZE, BLOCK_SIZE);
+}
+
+function startGame(): void {
+  addEventListeners();
+  initNext();
+}
+
+startGame();

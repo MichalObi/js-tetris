@@ -39,3 +39,10 @@ export interface timeInterface {
   elapsed: number,
   level: number
 }
+
+export interface canvasTextParamsInterface {
+  text: string,
+  textPositionX: number,
+  textPositionY: number,
+  textColorFill: string
+}
