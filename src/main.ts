@@ -83,7 +83,9 @@ function animate(now: number = 0): void {
 }
 
 function resetGame(): void {
-  account = { score: 0, lines: 0, level: 0 }
+  account.score = 0;
+  account.lines = 0;
+  account.level = 0;
   time = { start: 0, elapsed: 0, level: LEVEL[account.level] };
   board.reset(time);
 }
