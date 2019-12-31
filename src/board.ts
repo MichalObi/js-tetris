@@ -35,6 +35,10 @@ export class Board implements BoardInterface {
     this.getNewPiece();
   }
 
+  getEmptyGrid(): number[][] {
+    return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+  }
+
   getNewPiece(): void {
     const { width, height } = this.ctxNext.canvas;
 
@@ -43,29 +47,33 @@ export class Board implements BoardInterface {
     this.next.draw();
   }
 
+  valid(p: Piece): boolean {
+    return p.shape.every((row, dy) => {
+      return row.every((value, dx) => {
+        let x = p.x + dx,
+          y = p.y + dy;
+        return (
+          value === 0 ||
+          (this.insideWalls(x) && this.aboveFloor(y) && this.notOccupied(x, y))
+        );
+      });
+    });
+  }
+
   draw(): void {
     this.piece.draw();
     this.drawBoard();
   }
 
-  drop(): boolean {
-    let p = BASIC_MOVES[KEY.DOWN](this.piece);
-
-    if (this.valid(p)) {
-      this.piece.move(p);
-    } else {
-      this.freeze();
-      this.clearLines();
-      if (this.piece.y === 0) {
-        // Game over
-        return false;
-      }
-      this.piece = this.next;
-      this.piece.ctx = this.ctx;
-      this.piece.setStartingPosition();
-      this.getNewPiece();
-    }
-    return true;
+  drawBoard(): void {
+    this.grid.forEach((row, y) => {
+      row.forEach((value, x) => {
+        if (value > 0) {
+          this.ctx.fillStyle = COLORS[value];
+          this.ctx.fillRect(x, y, 1, 1);
+        }
+      });
+    });
   }
 
   clearLines(): void {
@@ -105,19 +113,6 @@ export class Board implements BoardInterface {
     }
   }
 
-  valid(p: Piece): boolean {
-    return p.shape.every((row, dy) => {
-      return row.every((value, dx) => {
-        let x = p.x + dx,
-          y = p.y + dy;
-        return (
-          value === 0 ||
-          (this.insideWalls(x) && this.aboveFloor(y) && this.notOccupied(x, y))
-        );
-      });
-    });
-  }
-
   freeze(): void {
     this.piece.shape.forEach((row, y) => {
       row.forEach((value, x) => {
@@ -128,19 +123,24 @@ export class Board implements BoardInterface {
     });
   }
 
-  drawBoard(): void {
-    this.grid.forEach((row, y) => {
-      row.forEach((value, x) => {
-        if (value > 0) {
-          this.ctx.fillStyle = COLORS[value];
-          this.ctx.fillRect(x, y, 1, 1);
-        }
-      });
-    });
-  }
+  drop(): boolean {
+    let pieceNewState = BASIC_MOVES[KEY.DOWN](this.piece);
 
-  getEmptyGrid(): number[][] {
-    return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+    if (this.valid(pieceNewState)) {
+      this.piece.move(pieceNewState);
+    } else {
+      this.freeze();
+      this.clearLines();
+      if (this.piece.y === 0) {
+        // Game over
+        return false;
+      }
+      this.piece = this.next;
+      this.piece.ctx = this.ctx;
+      this.piece.setStartingPosition();
+      this.getNewPiece();
+    }
+    return true;
   }
 
   insideWalls(x: number): boolean {

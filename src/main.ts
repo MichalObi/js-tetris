@@ -105,16 +105,18 @@ function keyDownEventListener(event) {
     gameOver();
   } else if (board.piece && validGameKey) {
     event.preventDefault();
-    const p = validGameKey(board.piece); // Get new state - dispatche key "move"
+
+    // Get new state - dispatch key "move"
+    let pieceNewState = validGameKey(board.piece);
 
     if (keyCode === KEY.SPACE) {   // Hard drop
-      while (board.valid(p)) {
+      while (board.valid(pieceNewState)) {
         account.score += POINTS.HARD_DROP;
-        board.piece.move(p);
-        p = moves[KEY.DOWN](board.piece);
+        board.piece.move(pieceNewState);
+        pieceNewState = moves[KEY.DOWN](board.piece);
       }
-    } else if (board.valid(p)) { // Soft drop
-      board.piece.move(p);
+    } else if (board.valid(pieceNewState)) { // Soft drop
+      board.piece.move(pieceNewState);
       if (keyCode === KEY.DOWN) account.score += POINTS.SOFT_DROP;
     }
   }
@@ -126,9 +128,10 @@ function addEventListeners(): void {
 }
 
 function initNext(): void {
-  // Calculate size of #next canvas from constants.
-  ctxNext.canvas.width = 4 * BLOCK_SIZE;
-  ctxNext.canvas.height = 4 * BLOCK_SIZE;
+  const nextSizeMultiplier = 4;
+
+  ctxNext.canvas.width = nextSizeMultiplier * BLOCK_SIZE;
+  ctxNext.canvas.height = nextSizeMultiplier * BLOCK_SIZE;
   ctxNext.scale(BLOCK_SIZE, BLOCK_SIZE);
 }
 
