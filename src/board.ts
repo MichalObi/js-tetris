@@ -50,8 +50,9 @@ export class Board implements BoardInterface {
   valid(p: Piece): boolean {
     return p.shape.every((row, dy) => {
       return row.every((value, dx) => {
-        let x = p.x + dx,
+        const x = p.x + dx,
           y = p.y + dy;
+
         return (
           value === 0 ||
           (this.insideWalls(x) && this.aboveFloor(y) && this.notOccupied(x, y))
